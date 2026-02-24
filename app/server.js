@@ -37,7 +37,11 @@ app.post('/update-profile', function (req, res) {
   let userObj = req.body;
 
   MongoClient.connect(mongoUrlDocker, mongoClientOptions, function (err, client) {
-    if (err) throw err;
+    // if (err) throw err;
+    if (err) {
+      console.log("Mongo connection failed:", err.message);
+      return res.send({});
+    }
 
     let db = client.db(databaseName);
     userObj['userid'] = 1;
@@ -46,7 +50,11 @@ app.post('/update-profile', function (req, res) {
     let newvalues = { $set: userObj };
 
     db.collection("users").updateOne(myquery, newvalues, {upsert: true}, function(err, res) {
-      if (err) throw err;
+      // if (err) throw err;
+      if (err) {
+        console.log("Mongo connection failed:", err.message);
+        return res.send({});
+      }
       client.close();
     });
 
@@ -59,14 +67,22 @@ app.get('/get-profile', function (req, res) {
   let response = {};
   // Connect to the db
   MongoClient.connect(mongoUrlDocker, mongoClientOptions, function (err, client) {
-    if (err) throw err;
+    // if (err) throw err;
+    if (err) {
+      console.log("Mongo connection failed:", err.message);
+      return res.send({});
+    }
 
     let db = client.db(databaseName);
 
     let myquery = { userid: 1 };
 
     db.collection("users").findOne(myquery, function (err, result) {
-      if (err) throw err;
+      // if (err) throw err;
+      if (err) {
+        console.log("Mongo connection failed:", err.message);
+        return res.send({});
+      }
       response = result;
       client.close();
 
